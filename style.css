@@ -1,0 +1,65 @@
+/* Estilos generales */
+body {
+    background-color: orange;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  
+    color: #333;
+}
+
+/* Contenedor principal */
+.container {
+    text-align: center;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Título */
+h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+/* Contenedor de botones */
+.button-container {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+/* Botones */
+.role-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Colores de los botones */
+#cliente {
+    background-color:orange;
+    color: white;
+    Width: 20vh;
+}
+
+#cliente:hover {
+    background-color: rgb(227, 154, 17);
+}
+
+#vendedor {
+    background-color:orange;
+    color: white;
+    Width: 20vh;
+}
+
+#vendedor:hover {
+    background-color: rgb(227, 154, 17);
+}
