@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos - Tienda Irvin</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Listado de Productos</h1>
+
+        <!-- Formulario para agregar productos -->
+        <div class="form-container">
+            <h2>Agregar Producto</h2>
+            <form id="addProductForm">
+                <div class="input-group">
+                    <label for="nombre">Nombre</label>
+                    <input type="text" id="nombre" name="nombre" required>
+                </div>
+                <div class="input-group">
+                    <label for="precio">Precio</label>
+                    <input type="number" id="precio" name="precio" required>
+                </div>
+                <div class="input-group">
+                    <label for="unidades">Unidades Disponibles</label>
+                    <input type="number" id="unidades" name="unidades" required>
+                </div>
+                <div class="input-group">
+                    <label for="caracteristicas">Características</label>
+                    <textarea id="caracteristicas" name="caracteristicas" required></textarea>
+                </div>
+                <div class="input-group">
+                    <label for="descripcion">Descripción</label>
+                    <textarea id="descripcion" name="descripcion" required></textarea>
+                </div>
+                <div class="input-group">
+                    <label for="fechaPublicacion">Fecha de Publicación</label>
+                    <input type="date" id="fechaPublicacion" name="fechaPublicacion" required>
+                </div>
+                <div class="input-group">
+                    <label for="favoritos">Favoritos</label>
+                    <input type="number" id="favoritos" name="favoritos" required>
+                </div>
+                <button type="submit" class="role-button">Agregar Producto</button>
+            </form>
+        </div>
+
+        <!-- Lista de productos -->
+        <h2>Productos Disponibles</h2>
+        <div class="product-list">
+            <!-- Los productos se llenarán dinámicamente con JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        // Función para obtener y mostrar los productos
+        async function fetchProductos() {
+            try {
+                const res = await fetch('/api/items');
+                const productos = await res.json();
+
+                const productListDiv = document.querySelector('.product-list');
+                productListDiv.innerHTML = '';
+
+                if (productos.length === 0) {
+                    productListDiv.innerHTML = '<p>No hay productos disponibles.</p>';
+                } else {
+                    productos.forEach(producto => {
+                        const productDiv = document.createElement('div');
+                        productDiv.classList.add('product');
+
+                        productDiv.innerHTML = `
+                            <h3>${producto.NOMBRE}</h3>
+                            <p><strong>Precio:</strong> $${producto.PRECIO}</p>
+                            <p><strong>Unidades Disponibles:</strong> ${producto.UNIDADES_DISPONIBLES}</p>
+                            <p><strong>Características:</strong> ${producto.CARACTERISTICAS_JS}</p>
+                            <p><strong>Descripción:</strong> ${producto.DESCRIPCION}</p>
+                            <p><strong>Fecha de Publicación:</strong> ${producto.FECHAPUBLICACION}</p>
+                            <p><strong>Favoritos:</strong> ${producto.FAVORITOS}</p>
+                        `;
+
+                        productListDiv.appendChild(productDiv);
+                    });
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Error al obtener productos. Intenta nuevamente.');
+            }
+        }
+
+        // Función para agregar un producto
+        async function addProduct(event) {
+            event.preventDefault();
+
+            const nombre = document.getElementById('nombre').value;
+            const precio = document.getElementById('precio').value;
+            const unidades = document.getElementById('unidades').value;
+            const caracteristicas = document.getElementById('caracteristicas').value;
+            const descripcion = document.getElementById('descripcion').value;
+            const fechaPublicacion = document.getElementById('fechaPublicacion').value;
+            const favoritos = document.getElementById('favoritos').value;
+
+            const newProduct = {
+                nombre,
+                precio,
+                unidades,
+                caracteristicas,
+                descripcion,
+                fechaPublicacion,
+                favoritos
+            };
+
+            try {
+                const res = await fetch('/api/items', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(newProduct)
+                });
+
+                const result = await res.json();
+                if (res.status === 201) {
+                    alert('Producto agregado exitosamente.');
+                    fetchProductos(); // Recargar los productos después de agregar uno nuevo
+                } else {
+                    alert('Error al agregar el producto.');
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Error al agregar el producto. Intenta nuevamente.');
+            }
+        }
+
+        // Llamar a la función para obtener los productos al cargar la página
+        fetchProductos();
+
+        // Configurar el formulario para agregar un producto
+        const addProductForm = document.getElementById('addProductForm');
+        addProductForm.addEventListener('submit', addProduct);
+    </script>
+</body>
+</html>

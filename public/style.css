@@ -1,0 +1,119 @@
+/* Estilos generales */
+body {
+  background-color: orange;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  height: 100vh;
+  color: #333;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Contenedor principal */
+.container {
+  text-align: center;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;  /* Esto asegura que el contenido se centre */
+  justify-content: center; /* Centrado vertical también */
+}
+
+/* Título */
+h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+/* Formulario para agregar productos */
+.form-container {
+  margin-bottom: 30px;
+  text-align: left;
+  width: 100%;
+  max-width: 500px;
+}
+
+/* Grupos de entrada */
+.input-group {
+  margin-bottom: 15px;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+.input-group input, .input-group textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+/* Botón de agregar producto */
+.role-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  background-color: orange;
+  color: white;
+  width: 100%;
+  max-width: 100%;
+}
+
+.role-button:hover {
+  background-color: rgb(227, 154, 17);
+}
+
+/* Lista de productos */
+.product-list {
+  width: 100%;
+  max-width: 500px;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Cada producto */
+.product {
+  border: 1px solid #ddd;
+  padding: 20px;
+  margin-bottom: 15px;
+  width: 100%;
+  max-width: 500px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+/* Efecto hover sobre el producto */
+.product:hover {
+  background-color: orange;
+  transform: translateY(-5px);  /* Eleva ligeramente el producto */
+}
+
+/* Estilo del nombre del producto */
+.product h3 {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+}
+
+/* Estilos de los párrafos dentro de cada producto */
+.product p {
+  margin: 5px 0;
+}
