@@ -34,13 +34,13 @@
                 <label for="fechaPublicacion">Fecha de Publicación</label>
                 <input type="date" id="fechaPublicacion" name="fechaPublicacion" required>
             </div>
-            <div class="input-group">
-                <label for="favoritos">Favoritos</label>
-                <input type="number" id="favoritos" name="favoritos" required>
-            </div>
             <button type="submit" class="role-button">Agregar Producto</button>
         </form>
     </div>
+
+    <footer>
+        <button id="viewMyProductsButton" class="role-button">Gestión de Productos</button>
+    </footer>
 
     <script>
         // Obtener el nombre del usuario y mostrar el mensaje de bienvenida
@@ -76,7 +76,6 @@
             const caracteristicas = document.getElementById('caracteristicas').value;
             const descripcion = document.getElementById('descripcion').value;
             const fechaPublicacion = document.getElementById('fechaPublicacion').value;
-            const favoritos = document.getElementById('favoritos').value;
 
             const newProduct = {
                 vendedor: user.id,
@@ -86,7 +85,7 @@
                 caracteristicas_js: caracteristicas,
                 descripcion,
                 fechapublicacion: fechaPublicacion,
-                favoritos
+                favoritos: 0  // Enviar 0 por defecto
             };
 
             try {
@@ -109,11 +108,11 @@
                 alert('Error al agregar el producto. Intenta nuevamente.');
             }
         });
-    </script>
-    <footer>
-        <a href="http://localhost:3000/myproducts.html" class="role-button" id="sellButton">GESTION DE PRODUCTOS</a>
-    </footer>
-    <iframe src="footer.html" style="width: 100%; height: 500px; border: none;"></iframe>
 
+        document.getElementById('viewMyProductsButton').addEventListener('click', function() {
+            window.location.href = 'myproducts.html';
+        });
+    </script>
+    <iframe src="footer.html" style="width: 100%; height: 500px; border: none;"></iframe>
 </body>
 </html>

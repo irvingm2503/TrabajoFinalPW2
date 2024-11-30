@@ -8,6 +8,7 @@
 </head>
 <body>
     <div class="container">
+        <button id="viewCartButton" class="role-button">Ver Carrito</button>
         <h1 id="welcomeMessage">Bienvenido a Tienda Irvin</h1>
 
         <!-- Lista de productos -->
@@ -22,6 +23,10 @@
     </footer>
 
     <script>
+        document.getElementById('viewCartButton').addEventListener('click', function() {
+            window.location.href = 'carrito.html';
+        });
+
         document.getElementById('sellButton').addEventListener('click', function() {
             window.location.href = 'shell.html'; // Asegúrate de que la ruta es correcta
         });
@@ -67,10 +72,21 @@
                             <p><strong>Características:</strong> ${producto.caracteristicas_js}</p>
                             <p><strong>Descripción:</strong> ${producto.descripcion}</p>
                             <p><strong>Fecha de Publicación:</strong> ${producto.fechapublicacion}</p>
-                            <p><strong>Favoritos:</strong> ${producto.favoritos}</p>
+                            <p><strong>Ventas:</strong> ${producto.favoritos}</p>
+                            <button class="add-to-cart-button" data-id="${producto.id}">
+                                <img src="carrito.png" alt="Agregar al Carrito" style="width: 20px; height: 20px;">
+                            </button>
                         `;
 
                         productListDiv.appendChild(productDiv);
+                    });
+
+                    // Asignar evento a los botones de agregar al carrito
+                    document.querySelectorAll('.add-to-cart-button').forEach(button => {
+                        button.addEventListener('click', function() {
+                            const productId = this.getAttribute('data-id');
+                            addToCart(productId);
+                        });
                     });
                 }
             } catch (error) {
@@ -79,10 +95,17 @@
             }
         }
 
+        // Función para agregar un producto al carrito
+        function addToCart(productId) {
+            let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+            carrito.push(productId);
+            localStorage.setItem('carrito', JSON.stringify(carrito));
+            console.log('Carrito:', carrito);
+        }
+
         // Llamar a la función para obtener los productos al cargar la página
         fetchProductos();
     </script>
-     <iframe src="footer.html" style="width: 100%; height: 500px; border: none;"></iframe>
-
+    <iframe src="footer.html" style="width: 100%; height: 500px; border: none;"></iframe>
 </body>
 </html>

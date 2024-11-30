@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito - Tienda Irvin</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Carrito de Compras</h1>
+
+        <!-- Lista de productos en el carrito -->
+        <div class="cart-list">
+            <!-- Los productos se llenarán dinámicamente con JavaScript -->
+        </div>
+        
+        <button id="checkoutButton" class="role-button">Comprar Carrito</button>
+    </div>
+
+    <script>
+        // Obtener los productos del carrito y mostrarlos en la página
+        async function fetchCartItems() {
+            let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+            let carritoUnico = [...new Set(carrito)]; // Obtener productos únicos
+
+            try {
+                const res = await fetch('/api/items');
+                const productos = await res.json();
+
+                const cartListDiv = document.querySelector('.cart-list');
+                cartListDiv.innerHTML = '';
+
+                if (!Array.isArray(productos)) {
+                    cartListDiv.innerHTML = '<p>Error al obtener productos. Intenta nuevamente.</p>';
+                    return;
+                }
+
+                carritoUnico.forEach(productId => {
+                    const producto = productos.find(p => p.id === parseInt(productId));
+                    const cantidad = carrito.filter(id => id === productId).length;
+
+                    if (producto) {
+                        const cartItemDiv = document.createElement('div');
+                        cartItemDiv.classList.add('cart-item');
+
+                        cartItemDiv.innerHTML = `
+                            <h3>${producto.nombre}</h3>
+                            <p><strong>Precio:</strong> $${producto.precio}</p>
+                            <p><strong>Unidades Disponibles:</strong> ${producto.unidades_disponibles}</p>
+                            <p><strong>Características:</strong> ${producto.caracteristicas_js}</p>
+                            <p><strong>Descripción:</strong> ${producto.descripcion}</p>
+                            <p><strong>Fecha de Publicación:</strong> ${producto.fechapublicacion}</p>
+                            <p><strong>Ventas:</strong> ${producto.favoritos}</p>
+                            <p><strong>En Carrito:</strong> ${cantidad}</p>
+                        `;
+
+                        cartListDiv.appendChild(cartItemDiv);
+                    }
+                });
+            } catch (error) {
+                console.error('Error al obtener productos:', error);
+                alert('Error al obtener productos. Intenta nuevamente.');
+            }
+        }
+
+        // Función para finalizar la compra del carrito
+        document.getElementById('checkoutButton').addEventListener('click', async function() {
+            let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+            let carritoUnico = [...new Set(carrito)]; // Obtener productos únicos
+
+            try {
+                const res = await fetch('/api/items');
+                const productos = await res.json();
+
+                let totalCompra = 0;
+                let actualizacionCorrecta = true;
+
+                for (const productId of carritoUnico) {
+                    const producto = productos.find(p => p.id === parseInt(productId));
+                    const cantidad = carrito.filter(id => id === productId).length;
+
+                    if (producto) {
+                        if (producto.unidades_disponibles >= cantidad) {
+                            producto.unidades_disponibles -= cantidad;
+                            producto.favoritos += cantidad; // Actualizar ventas
+
+                            totalCompra += producto.precio * cantidad;
+
+                            // Actualizar producto en la base de datos
+                            const updateRes = await fetch(`/api/items/${productId}`, {
+                                method: 'PUT',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    unidades_disponibles: producto.unidades_disponibles,
+                                    favoritos: producto.favoritos // Actualizar ventas
+                                })
+                            });
+
+                            if (updateRes.status !== 200) {
+                                actualizacionCorrecta = false;
+                                break;
+                            }
+                        } else {
+                            alert(`No hay suficientes unidades disponibles para el producto: ${producto.nombre}`);
+                            actualizacionCorrecta = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (actualizacionCorrecta) {
+                    alert('Venta exitosa.');
+                    alert(`Total de la compra: $${totalCompra}`);
+                    localStorage.removeItem('carrito'); // Vaciar el carrito después de la compra
+                    window.location.href = 'index.html';
+                }
+            } catch (error) {
+                console.error('Error al procesar la compra:', error);
+                alert('Error al procesar la compra. Intenta nuevamente.');
+            }
+        });
+
+        // Llamar a la función para obtener los productos del carrito al cargar la página
+        fetchCartItems();
+    </script>
+    <iframe src="footer.html" style="width: 100%; height: 500px; border: none;"></iframe> 
+</body>
+</html>
