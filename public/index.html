@@ -8,43 +8,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Listado de Productos</h1>
-
-        <!-- Formulario para agregar productos -->
-        <div class="form-container">
-            <h2>Agregar Producto</h2>
-            <form id="addProductForm">
-                <div class="input-group">
-                    <label for="nombre">Nombre</label>
-                    <input type="text" id="nombre" name="nombre" required>
-                </div>
-                <div class="input-group">
-                    <label for="precio">Precio</label>
-                    <input type="number" id="precio" name="precio" required>
-                </div>
-                <div class="input-group">
-                    <label for="unidades">Unidades Disponibles</label>
-                    <input type="number" id="unidades" name="unidades" required>
-                </div>
-                <div class="input-group">
-                    <label for="caracteristicas">Características</label>
-                    <textarea id="caracteristicas" name="caracteristicas" required></textarea>
-                </div>
-                <div class="input-group">
-                    <label for="descripcion">Descripción</label>
-                    <textarea id="descripcion" name="descripcion" required></textarea>
-                </div>
-                <div class="input-group">
-                    <label for="fechaPublicacion">Fecha de Publicación</label>
-                    <input type="date" id="fechaPublicacion" name="fechaPublicacion" required>
-                </div>
-                <div class="input-group">
-                    <label for="favoritos">Favoritos</label>
-                    <input type="number" id="favoritos" name="favoritos" required>
-                </div>
-                <button type="submit" class="role-button">Agregar Producto</button>
-            </form>
-        </div>
+        <h1 id="welcomeMessage">Bienvenido, Usuario</h1>
 
         <!-- Lista de productos -->
         <h2>Productos Disponibles</h2>
@@ -52,8 +16,29 @@
             <!-- Los productos se llenarán dinámicamente con JavaScript -->
         </div>
     </div>
+    
+    <footer>
+        <a href="http://localhost:3000/shell.html" class="role-button" id="sellButton">Vender Productos</a>
+
+
+    </footer>
 
     <script>
+        document.getElementById('sellButton').addEventListener('click', function() {
+            window.location.href = 'sell.html';
+        });
+
+        // Obtener el nombre del usuario y mostrar el mensaje de bienvenida
+        function setWelcomeMessage() {
+            const user = localStorage.getItem('user');
+            if (user) {
+                const userData = JSON.parse(user);
+                document.getElementById('welcomeMessage').innerText = `Bienvenido, ${userData.nombres} ${userData.apellidos}`;
+            }
+        }
+
+        setWelcomeMessage();
+
         // Función para obtener y mostrar los productos
         async function fetchProductos() {
             try {
@@ -89,56 +74,8 @@
             }
         }
 
-        // Función para agregar un producto
-        async function addProduct(event) {
-            event.preventDefault();
-
-            const nombre = document.getElementById('nombre').value;
-            const precio = document.getElementById('precio').value;
-            const unidades = document.getElementById('unidades').value;
-            const caracteristicas = document.getElementById('caracteristicas').value;
-            const descripcion = document.getElementById('descripcion').value;
-            const fechaPublicacion = document.getElementById('fechaPublicacion').value;
-            const favoritos = document.getElementById('favoritos').value;
-
-            const newProduct = {
-                nombre,
-                precio,
-                unidades,
-                caracteristicas,
-                descripcion,
-                fechaPublicacion,
-                favoritos
-            };
-
-            try {
-                const res = await fetch('/api/items', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(newProduct)
-                });
-
-                const result = await res.json();
-                if (res.status === 201) {
-                    alert('Producto agregado exitosamente.');
-                    fetchProductos(); // Recargar los productos después de agregar uno nuevo
-                } else {
-                    alert('Error al agregar el producto.');
-                }
-            } catch (error) {
-                console.error(error);
-                alert('Error al agregar el producto. Intenta nuevamente.');
-            }
-        }
-
         // Llamar a la función para obtener los productos al cargar la página
         fetchProductos();
-
-        // Configurar el formulario para agregar un producto
-        const addProductForm = document.getElementById('addProductForm');
-        addProductForm.addEventListener('submit', addProduct);
     </script>
 </body>
 </html>

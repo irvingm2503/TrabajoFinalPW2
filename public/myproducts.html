@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Productos - Tienda Irvin</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1 id="welcomeMessage">Mis Productos</h1>
+
+        <!-- Lista de productos -->
+        <h2>Productos Disponibles</h2>
+        <div class="product-list">
+            <!-- Los productos se llenarán dinámicamente con JavaScript -->
+        </div>
+    </div>
+    
+    <footer>
+        <button id="backToSellButton" class="role-button">Volver a Vender Productos</button>
+    </footer>
+
+    <script>
+        document.getElementById('backToSellButton').addEventListener('click', function() {
+            window.location.href = 'sell.html';
+        });
+
+        // Obtener el nombre del usuario y mostrar el mensaje de bienvenida
+        function setWelcomeMessage() {
+            const user = localStorage.getItem('user');
+            if (user) {
+                const userData = JSON.parse(user);
+                console.log('Datos de sesión actuales:', userData); // Agregar console.log para los datos de sesión
+                document.getElementById('welcomeMessage').innerText = `Mis Productos - ${userData.nombres} ${userData.apellidos}`;
+            }
+        }
+
+        setWelcomeMessage();
+
+        // Verificar si el usuario está autenticado
+        function isAuthenticated() {
+            const user = localStorage.getItem('user');
+            if (!user) {
+                alert('Debe iniciar sesión para ver sus productos.');
+                window.location.href = 'login.html';
+                return false;
+            }
+            return true;
+        }
+
+        async function fetchMyProductos() {
+            if (!isAuthenticated()) return;
+
+            const user = JSON.parse(localStorage.getItem('user'));
+
+            try {
+                const res = await fetch(`/api/items?userId=${user.id}`);
+                const productos = await res.json();
+
+                const productListDiv = document.querySelector('.product-list');
+                productListDiv.innerHTML = '';
+
+                if (productos.length === 0) {
+                    productListDiv.innerHTML = '<p>No tienes productos disponibles.</p>';
+                } else {
+                    productos.forEach(producto => {
+                        const productDiv = document.createElement('div');
+                        productDiv.classList.add('product');
+
+                        productDiv.innerHTML = `
+                            <h3>${producto.NOMBRE}</h3>
+                            <p><strong>Precio:</strong> $${producto.PRECIO}</p>
+                            <p><strong>Unidades Disponibles:</strong> ${producto.UNIDADES_DISPONIBLES}</p>
+                            <p><strong>Características:</strong> ${producto.CARACTERISTICAS_JS}</p>
+                            <p><strong>Descripción:</strong> ${producto.DESCRIPCION}</p>
+                            <p><strong>Fecha de Publicación:</strong> ${producto.FECHAPUBLICACION}</p>
+                            <p><strong>Favoritos:</strong> ${producto.FAVORITOS}</p>
+                            <button class="delete-button" data-id="${producto.ID}">Eliminar</button>
+                        `;
+
+                        productListDiv.appendChild(productDiv);
+                    });
+
+                    // Asignar evento a los botones de eliminar
+                    document.querySelectorAll('.delete-button').forEach(button => {
+                        button.addEventListener('click', async function() {
+                            const productId = this.getAttribute('data-id');
+                            try {
+                                const res = await fetch(`/api/items/${productId}`, {
+                                    method: 'DELETE'
+                                });
+                                if (res.status === 200) {
+                                    alert('Producto eliminado exitosamente.');
+                                    fetchMyProductos();
+                                } else {
+                                    alert('Error al eliminar el producto.');
+                                }
+                            } catch (error) {
+                                console.error('Error al eliminar el producto:', error.message);
+                                alert('Error al eliminar el producto. Intenta nuevamente.');
+                            }
+                        });
+                    });
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Error al obtener productos. Intenta nuevamente.');
+            }
+        }
+
+        // Llamar a la función para obtener los productos del usuario al cargar la página
+        fetchMyProductos();
+    </script>
+</body>
+</html>

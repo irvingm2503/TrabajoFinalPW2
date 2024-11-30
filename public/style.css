@@ -21,11 +21,11 @@ body {
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 800px;
+  max-width: 500px;
   display: flex;
   flex-direction: column;
-  align-items: center;  /* Esto asegura que el contenido se centre */
-  justify-content: center; /* Centrado vertical también */
+  align-items: center;
+  justify-content: center;
 }
 
 /* Título */
@@ -59,11 +59,12 @@ h1 {
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 16px;
+  box-sizing: border-box;
 }
 
 /* Botón de agregar producto */
 .role-button {
-  padding: 10px 20px;
+  padding: 10px;
   font-size: 16px;
   border: none;
   border-radius: 5px;
@@ -71,8 +72,11 @@ h1 {
   transition: background-color 0.3s ease;
   background-color: orange;
   color: white;
+  display: block;
   width: 100%;
-  max-width: 100%;
+  max-width: 500px;
+  box-sizing: border-box;
+  margin-bottom: 15px;
 }
 
 .role-button:hover {
@@ -104,7 +108,7 @@ h1 {
 /* Efecto hover sobre el producto */
 .product:hover {
   background-color: orange;
-  transform: translateY(-5px);  /* Eleva ligeramente el producto */
+  transform: translateY(-5px);
 }
 
 /* Estilo del nombre del producto */
