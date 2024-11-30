@@ -23,7 +23,7 @@
 
     <script>
         document.getElementById('backToSellButton').addEventListener('click', function() {
-            window.location.href = 'sell.html';
+            window.location.href = 'shell.html';
         });
 
         // Obtener el nombre del usuario y mostrar el mensaje de bienvenida
@@ -31,7 +31,8 @@
             const user = localStorage.getItem('user');
             if (user) {
                 const userData = JSON.parse(user);
-                console.log('Datos de sesión actuales:', userData); // Agregar console.log para los datos de sesión
+                console.log('Datos de sesión actuales:', userData); // Mostrar datos de sesión en la consola
+                console.log('ID del usuario:', userData.id); // Mostrar ID del usuario en la consola
                 document.getElementById('welcomeMessage').innerText = `Mis Productos - ${userData.nombres} ${userData.apellidos}`;
             }
         }
@@ -55,28 +56,31 @@
             const user = JSON.parse(localStorage.getItem('user'));
 
             try {
-                const res = await fetch(`/api/items?userId=${user.id}`);
+                const res = await fetch(`/api/items`);
                 const productos = await res.json();
 
                 const productListDiv = document.querySelector('.product-list');
                 productListDiv.innerHTML = '';
 
-                if (productos.length === 0) {
+                const productosFiltrados = productos.filter(producto => producto.vendedor === user.id);
+
+                if (productosFiltrados.length === 0) {
                     productListDiv.innerHTML = '<p>No tienes productos disponibles.</p>';
                 } else {
-                    productos.forEach(producto => {
+                    productosFiltrados.forEach(producto => {
                         const productDiv = document.createElement('div');
                         productDiv.classList.add('product');
 
                         productDiv.innerHTML = `
-                            <h3>${producto.NOMBRE}</h3>
-                            <p><strong>Precio:</strong> $${producto.PRECIO}</p>
-                            <p><strong>Unidades Disponibles:</strong> ${producto.UNIDADES_DISPONIBLES}</p>
-                            <p><strong>Características:</strong> ${producto.CARACTERISTICAS_JS}</p>
-                            <p><strong>Descripción:</strong> ${producto.DESCRIPCION}</p>
-                            <p><strong>Fecha de Publicación:</strong> ${producto.FECHAPUBLICACION}</p>
-                            <p><strong>Favoritos:</strong> ${producto.FAVORITOS}</p>
-                            <button class="delete-button" data-id="${producto.ID}">Eliminar</button>
+                            <h3>${producto.nombre}</h3>
+                            <p><strong>Precio:</strong> $${producto.precio}</p>
+                            <p><strong>Unidades Disponibles:</strong> ${producto.unidades_disponibles}</p>
+                            <p><strong>Características:</strong> ${producto.caracteristicas_js}</p>
+                            <p><strong>Descripción:</strong> ${producto.descripcion}</p>
+                            <p><strong>Fecha de Publicación:</strong> ${producto.fechapublicacion}</p>
+                            <p><strong>Favoritos:</strong> ${producto.favoritos}</p>
+                            <button class="edit-button" data-id="${producto.id}">Editar</button>
+                            <button class="delete-button" data-id="${producto.id}">Eliminar</button>
                         `;
 
                         productListDiv.appendChild(productDiv);
@@ -94,7 +98,7 @@
                                     alert('Producto eliminado exitosamente.');
                                     fetchMyProductos();
                                 } else {
-                                    alert('Error al eliminar el producto.');
+                                    location.reload(); // Recargar página si hay un error
                                 }
                             } catch (error) {
                                 console.error('Error al eliminar el producto:', error.message);
@@ -102,9 +106,17 @@
                             }
                         });
                     });
+
+                    // Asignar evento a los botones de editar
+                    document.querySelectorAll('.edit-button').forEach(button => {
+                        button.addEventListener('click', function() {
+                            const productId = this.getAttribute('data-id');
+                            window.location.href = `edit.html?id=${productId}`;
+                        });
+                    });
                 }
             } catch (error) {
-                console.error(error);
+                console.error('Error al obtener productos:', error);
                 alert('Error al obtener productos. Intenta nuevamente.');
             }
         }

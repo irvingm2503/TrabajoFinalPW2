@@ -29,6 +29,31 @@ app.get('/api/items', async (req, res) => {
   }
 });
 
+// Ruta para obtener un producto por ID
+app.get('/api/items/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const { data, error } = await supabase
+      .from('productos')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    if (!data) {
+      return res.status(404).send({ message: 'Producto no encontrado' });
+    }
+
+    res.json(data);
+  } catch (error) {
+    console.error('Error al obtener el producto:', error.message);
+    res.status(500).send({ message: 'Error al obtener el producto', error: error.message });
+  }
+});
+
 // Ruta para crear un nuevo producto
 app.post('/api/items', async (req, res) => {
   const { vendedor, nombre, precio, unidades_disponibles, caracteristicas_js, descripcion, fechapublicacion, favoritos } = req.body;

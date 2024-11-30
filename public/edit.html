@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Producto - Tienda Irvin</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Editar Producto</h1>
+        <form id="editProductForm">
+            <div class="input-group">
+                <label for="nombre">Nombre</label>
+                <input type="text" id="nombre" name="nombre" required>
+            </div>
+            <div class="input-group">
+                <label for="precio">Precio</label>
+                <input type="number" id="precio" name="precio" required>
+            </div>
+            <div class="input-group">
+                <label for="unidades">Unidades Disponibles</label>
+                <input type="number" id="unidades" name="unidades" required>
+            </div>
+            <div class="input-group">
+                <label for="caracteristicas">Características</label>
+                <textarea id="caracteristicas" name="caracteristicas" required></textarea>
+            </div>
+            <div class="input-group">
+                <label for="descripcion">Descripción</label>
+                <textarea id="descripcion" name="descripcion" required></textarea>
+            </div>
+            <div class="input-group">
+                <label for="fechaPublicacion">Fecha de Publicación</label>
+                <input type="date" id="fechaPublicacion" name="fechaPublicacion" required>
+            </div>
+            <div class="input-group">
+                <label for="favoritos">Favoritos</label>
+                <input type="number" id="favoritos" name="favoritos" required>
+            </div>
+            <button type="submit" class="role-button">Guardar Cambios</button>
+        </form>
+    </div>
+
+    <script>
+        // Obtener el ID del producto de la URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id');
+
+        // Obtener los datos del producto y mostrarlos en el formulario
+        async function fetchProductData() {
+            try {
+                const res = await fetch(`/api/items/${productId}`);
+                if (res.status === 404) {
+                    throw new Error('Producto no encontrado');
+                }
+                const product = await res.json();
+
+                document.getElementById('nombre').value = product.nombre;
+                document.getElementById('precio').value = product.precio;
+                document.getElementById('unidades').value = product.unidades_disponibles;
+                document.getElementById('caracteristicas').value = product.caracteristicas_js;
+                document.getElementById('descripcion').value = product.descripcion;
+                document.getElementById('fechaPublicacion').value = product.fechapublicacion;
+                document.getElementById('favoritos').value = product.favoritos;
+
+                // Imprimir los datos del producto en la consola como lista
+                console.log('Datos del producto:', {
+                    nombre: product.nombre,
+                    precio: product.precio,
+                    unidades_disponibles: product.unidades_disponibles,
+                    caracteristicas_js: product.caracteristicas_js,
+                    descripcion: product.descripcion,
+                    fechapublicacion: product.fechapublicacion,
+                    favoritos: product.favoritos
+                });
+            } catch (error) {
+                console.error('Error al obtener los datos del producto:', error);
+                alert('Error al obtener los datos del producto. Intenta nuevamente.');
+            }
+        }
+
+        // Llamar a la función para obtener los datos del producto al cargar la página
+        fetchProductData();
+
+        // Guardar los cambios realizados en el producto
+        document.getElementById('editProductForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const nombre = document.getElementById('nombre').value;
+            const precio = document.getElementById('precio').value;
+            const unidades = document.getElementById('unidades').value;
+            const caracteristicas = document.getElementById('caracteristicas').value;
+            const descripcion = document.getElementById('descripcion').value;
+            const fechaPublicacion = document.getElementById('fechaPublicacion').value;
+            const favoritos = document.getElementById('favoritos').value;
+
+            const updatedProduct = {
+                nombre,
+                precio,
+                unidades_disponibles: unidades,
+                caracteristicas_js: caracteristicas,
+                descripcion,
+                fechapublicacion: fechaPublicacion,
+                favoritos
+            };
+
+            try {
+                const res = await fetch(`/api/items/${productId}`, {
+                    method: 'PUT', // Asegúrate de que tu servidor maneje esta solicitud
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updatedProduct)
+                });
+
+                if (res.status === 200) {
+                    alert('Producto actualizado exitosamente.');
+                    window.location.href = 'myproducts.html';
+                } else {
+                    alert('Error al actualizar el producto.');
+                }
+            } catch (error) {
+                console.error('Error al actualizar el producto:', error);
+                alert('Error al actualizar el producto. Intenta nuevamente.');
+            }
+        });
+    </script>
+</body>
+</html>
