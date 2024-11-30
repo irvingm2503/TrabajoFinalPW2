@@ -20,7 +20,7 @@ app.get('/api/items', async (req, res) => {
       throw error;
     }
 
-    console.log('Datos recuperados:', data); // Verificar datos recuperados
+    console.log('Datos recuperados:', data);
 
     res.json(data);
   } catch (error) {
@@ -33,7 +33,6 @@ app.get('/api/items', async (req, res) => {
 app.post('/api/items', async (req, res) => {
   const { vendedor, nombre, precio, unidades_disponibles, caracteristicas_js, descripcion, fechapublicacion, favoritos } = req.body;
 
-  // Validar que los datos necesarios estén presentes
   if (!vendedor || !nombre || !precio || !unidades_disponibles || !caracteristicas_js || !descripcion || !fechapublicacion || favoritos === undefined) {
     return res.status(400).json({ error: 'Faltan datos requeridos' });
   }
@@ -114,7 +113,6 @@ app.post('/api/login', async (req, res) => {
 app.post('/api/register', async (req, res) => {
   const { nombres, apellidos, correo, contrasena } = req.body;
 
-  // Validar que los datos necesarios estén presentes
   if (!nombres || !apellidos || !correo || !contrasena) {
     return res.status(400).json({ error: 'Faltan datos requeridos' });
   }
