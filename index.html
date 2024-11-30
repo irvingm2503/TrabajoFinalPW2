@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio de Sesión - Tienda Irvin</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Iniciar Sesión</h1>
+        <form id="loginForm">
+            <div class="input-group">
+                <label for="correo">Correo Electrónico</label>
+                <input type="email" id="correo" name="correo" required>
+            </div>
+            <div class="input-group">
+                <label for="contrasena">Contraseña</label>
+                <input type="password" id="contrasena" name="contrasena" required>
+            </div>
+            <button type="submit" class="role-button">Iniciar Sesión</button>
+        </form>
+        <button id="createAccountButton" class="role-button" style="margin-top: 20px;">Crear Cuenta</button>
+        <p id="error-message" style="color: red; display: none;">Error: Usuario o contraseña incorrectos.</p>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const correo = document.getElementById('correo').value;
+            const contrasena = document.getElementById('contrasena').value;
+
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ correo, contrasena })
+                });
+
+                const result = await res.json();
+                if (res.status === 200) {
+                    // Guardar datos del usuario en localStorage
+                    localStorage.setItem('user', JSON.stringify(result.user));
+                    window.location.href = 'index.html';
+                } else if (res.status === 401) {
+                    document.getElementById('error-message').style.display = 'block';
+                } else if (res.status === 404) {
+                    window.location.href = 'register.html';
+                }
+            } catch (error) {
+                console.error('Error al iniciar sesión:', error.message);
+            }
+        });
+
+        document.getElementById('createAccountButton').addEventListener('click', function() {
+            window.location.href = 'register.html';
+        });
+    </script>
+</body>
+</html>
