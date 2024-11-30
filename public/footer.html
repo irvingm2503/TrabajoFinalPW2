@@ -19,6 +19,9 @@
             const boton = document.getElementById("salirBoton");
             boton.style.backgroundColor = "white";
             boton.style.color = "orange";
+            // Borrar los datos del carrito
+            localStorage.removeItem('carrito');
+            // Redirigir a la página de login después de 1 segundo
             setTimeout(() => {
                 window.top.location.href = "http://localhost:3000/login.html"; // Redirige toda la página
             }, 1000); // Redirige después de 1 segundo

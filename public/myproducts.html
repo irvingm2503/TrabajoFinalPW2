@@ -68,6 +68,8 @@
                     productListDiv.innerHTML = '<p>No tienes productos disponibles.</p>';
                 } else {
                     productosFiltrados.forEach(producto => {
+                        const ventasTotales = producto.favoritos * producto.precio;
+
                         const productDiv = document.createElement('div');
                         productDiv.classList.add('product');
 
@@ -79,6 +81,7 @@
                             <p><strong>Descripción:</strong> ${producto.descripcion}</p>
                             <p><strong>Fecha de Publicación:</strong> ${producto.fechapublicacion}</p>
                             <p><strong>Ventas:</strong> ${producto.favoritos}</p>
+                            <p><strong>Ventas Totales:</strong> $${ventasTotales}</p>
                             <button class="edit-button" data-id="${producto.id}">Editar</button>
                             <button class="delete-button" data-id="${producto.id}">Eliminar</button>
                         `;
@@ -124,4 +127,6 @@
         // Llamar a la función para obtener los productos del usuario al cargar la página
         fetchMyProductos();
     </script>
- 
+    <iframe src="footer.html" style="width: 100%; height: 500px; border: none;"></iframe>
+</body>
+</html>

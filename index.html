@@ -3,84 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Productos - Tienda Irvin</title>
+    <title>Inicio de Sesión - Tienda Irvin</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1 id="welcomeMessage">Bienvenido a Tienda Irvin</h1>
-
-        <!-- Lista de productos -->
-        <h2>Productos Disponibles</h2>
-        <div class="product-list">
-            <!-- Los productos se llenarán dinámicamente con JavaScript -->
-        </div>
+        <h1>Iniciar Sesión</h1>
+        <form id="loginForm">
+            <div class="input-group">
+                <label for="correo">Correo Electrónico</label>
+                <input type="email" id="correo" name="correo" required>
+            </div>
+            <div class="input-group">
+                <label for="contrasena">Contraseña</label>
+                <input type="password" id="contrasena" name="contrasena" required>
+            </div>
+            <button type="submit" class="role-button">Iniciar Sesión</button>
+        </form>
+        <button id="createAccountButton" class="role-button" style="margin-top: 20px;">Crear Cuenta</button>
+        <p id="error-message" style="color: red; display: none;">Error: Usuario o contraseña incorrectos.</p>
     </div>
-    
-    <footer>
-        <button id="sellButton" class="role-button">Vender Productos</button>
-    </footer>
 
     <script>
-        document.getElementById('sellButton').addEventListener('click', function() {
-            window.location.href = 'shell.html'; // Asegúrate de que la ruta es correcta
-        });
+        document.getElementById('loginForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
 
-        // Obtener el nombre del usuario y mostrar el mensaje de bienvenida
-        function setWelcomeMessage() {
-            const user = localStorage.getItem('user');
-            if (user) {
-                const userData = JSON.parse(user);
-                document.getElementById('welcomeMessage').innerText = `Bienvenido, ${userData.nombres} ${userData.apellidos}`;
-            }
-        }
+            const correo = document.getElementById('correo').value;
+            const contrasena = document.getElementById('contrasena').value;
 
-        setWelcomeMessage();
-
-        // Función para obtener y mostrar los productos
-        async function fetchProductos() {
             try {
-                const res = await fetch('/api/items');
-                const productos = await res.json();
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ correo, contrasena })
+                });
 
-                console.log('Productos recibidos:', productos); // Verificar productos recibidos
-
-                const productListDiv = document.querySelector('.product-list');
-                productListDiv.innerHTML = '';
-
-                if (!Array.isArray(productos)) {
-                    productListDiv.innerHTML = '<p>Error al obtener productos. Intenta nuevamente.</p>';
-                    return;
-                }
-
-                if (productos.length === 0) {
-                    productListDiv.innerHTML = '<p>No hay productos disponibles.</p>';
-                } else {
-                    productos.forEach(producto => {
-                        const productDiv = document.createElement('div');
-                        productDiv.classList.add('product');
-
-                        productDiv.innerHTML = `
-                            <h3>${producto.nombre}</h3>
-                            <p><strong>Precio:</strong> $${producto.precio}</p>
-                            <p><strong>Unidades Disponibles:</strong> ${producto.unidades_disponibles}</p>
-                            <p><strong>Características:</strong> ${producto.caracteristicas_js}</p>
-                            <p><strong>Descripción:</strong> ${producto.descripcion}</p>
-                            <p><strong>Fecha de Publicación:</strong> ${producto.fechapublicacion}</p>
-                            <p><strong>Favoritos:</strong> ${producto.favoritos}</p>
-                        `;
-
-                        productListDiv.appendChild(productDiv);
-                    });
+                const result = await res.json();
+                if (res.status === 200) {
+                    // Guardar datos del usuario en localStorage
+                    localStorage.setItem('user', JSON.stringify(result.user));
+                    window.location.href = 'index.html';
+                } else if (res.status === 401) {
+                    document.getElementById('error-message').style.display = 'block';
+                } else if (res.status === 404) {
+                    window.location.href = 'register.html';
                 }
             } catch (error) {
-                console.error('Error al obtener productos:', error);
-                alert('Error al obtener productos. Intenta nuevamente.');
+                console.error('Error al iniciar sesión:', error.message);
             }
-        }
+        });
 
-        // Llamar a la función para obtener los productos al cargar la página
-        fetchProductos();
+        document.getElementById('createAccountButton').addEventListener('click', function() {
+            window.location.href = 'register.html';
+        });
     </script>
 </body>
 </html>
