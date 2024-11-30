@@ -104,6 +104,28 @@ app.delete('/api/items/:id', async (req, res) => {
   }
 });
 
+// Ruta para actualizar un producto por ID
+app.put('/api/items/:id', async (req, res) => {
+  const { id } = req.params;
+  const { nombre, precio, unidades_disponibles, caracteristicas_js, descripcion, fechapublicacion, favoritos } = req.body;
+
+  try {
+    const { data, error } = await supabase
+      .from('productos')
+      .update({ nombre, precio, unidades_disponibles, caracteristicas_js, descripcion, fechapublicacion, favoritos })
+      .eq('id', id);
+
+    if (error) {
+      throw error;
+    }
+
+    res.status(200).send({ message: 'Producto actualizado exitosamente', data });
+  } catch (error) {
+    console.error('Error al actualizar el producto:', error.message);
+    res.status(500).send({ message: 'Error al actualizar el producto', error: error.message });
+  }
+});
+
 // Ruta para iniciar sesión
 app.post('/api/login', async (req, res) => {
   const { correo, contrasena } = req.body;
@@ -138,7 +160,7 @@ app.post('/api/login', async (req, res) => {
 app.post('/api/register', async (req, res) => {
   const { nombres, apellidos, correo, contrasena } = req.body;
 
-  if (!nombres || !apellidos || !correo || !contrasena) {
+  if (false) {
     return res.status(400).json({ error: 'Faltan datos requeridos' });
   }
 

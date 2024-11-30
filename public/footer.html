@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Botón Salir</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        
+        <p>CERAR CESION .</p>
+        <button class="role-button" id="salirBoton" onclick="redirigir()">Salir</button>
+    </div>
+
+    <script>
+        function redirigir() {
+            alert("Serás redirigido a la página de login.");
+            const boton = document.getElementById("salirBoton");
+            boton.style.backgroundColor = "white";
+            boton.style.color = "orange";
+            setTimeout(() => {
+                window.top.location.href = "http://localhost:3000/login.html"; // Redirige toda la página
+            }, 1000); // Redirige después de 1 segundo
+        }
+    </script>
+</body>
+</html>
